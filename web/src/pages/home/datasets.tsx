@@ -1,13 +1,13 @@
-import { IconFont } from '@/components/icon-font';
 import { RenameDialog } from '@/components/rename-dialog';
+import { Button } from '@/components/ui/button';
 import { CardSkeleton } from '@/components/ui/skeleton';
+import { useNavigatePage } from '@/hooks/logic-hooks/navigate-hooks';
 import { useFetchNextKnowledgeListByPage } from '@/hooks/use-knowledge-request';
-import { useTranslation } from 'react-i18next';
-import { DatasetCard, SeeAllCard } from '../datasets/dataset-card';
+import { DatasetCard } from '../datasets/dataset-card';
 import { useRenameDataset } from '../datasets/use-rename-dataset';
 
 export function Datasets() {
-  const { t } = useTranslation();
+  const { navigateToDatasetList } = useNavigatePage();
   const { kbs, loading } = useFetchNextKnowledgeListByPage();
   const {
     datasetRenameLoading,
@@ -20,10 +20,7 @@ export function Datasets() {
 
   return (
     <section>
-      <h2 className="text-2xl font-bold mb-6 flex gap-2.5 items-center">
-        <IconFont name="data" className="size-8"></IconFont>
-        {t('header.knowledgeBase')}
-      </h2>
+      <h2 className="text-2xl font-bold mb-6">Datasets</h2>
       <div className="flex gap-6">
         {loading ? (
           <div className="flex-1">
@@ -31,7 +28,7 @@ export function Datasets() {
           </div>
         ) : (
           <div className="flex gap-4 flex-1">
-            {kbs.slice(0, 6).map((dataset) => (
+            {kbs.slice(0, 4).map((dataset) => (
               <DatasetCard
                 key={dataset.id}
                 dataset={dataset}
@@ -40,7 +37,13 @@ export function Datasets() {
             ))}
           </div>
         )}
-        <SeeAllCard></SeeAllCard>
+        <Button
+          className="h-auto "
+          variant={'tertiary'}
+          onClick={navigateToDatasetList}
+        >
+          See all
+        </Button>
       </div>
       {datasetRenameVisible && (
         <RenameDialog

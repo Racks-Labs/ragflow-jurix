@@ -1,22 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useSetModalState } from '@/hooks/common-hooks';
 import { IFlowTemplate } from '@/interfaces/database/flow';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface IProps {
   data: IFlowTemplate;
-  showModal(record: IFlowTemplate): void;
 }
 
-export function TemplateCard({ data, showModal }: IProps) {
+export function TemplateCard({
+  data,
+  showModal,
+}: IProps & Pick<ReturnType<typeof useSetModalState>, 'showModal'>) {
   const { t } = useTranslation();
-
-  const handleClick = useCallback(() => {
-    showModal(data);
-  }, [data, showModal]);
-
   return (
     <Card className="bg-colors-background-inverse-weak  border-colors-outline-neutral-standard group relative">
       <CardContent className="p-4 ">
@@ -38,7 +35,7 @@ export function TemplateCard({ data, showModal }: IProps) {
         <Button
           variant="tertiary"
           className="absolute bottom-4 right-4 left-4 hidden justify-end group-hover:block text-center"
-          onClick={handleClick}
+          onClick={showModal}
         >
           {t('flow.useTemplate')}
         </Button>

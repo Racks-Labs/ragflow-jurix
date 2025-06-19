@@ -1,8 +1,4 @@
-import {
-  useFetchAgent,
-  useResetAgent,
-  useSetAgent,
-} from '@/hooks/use-agent-request';
+import { useFetchFlow, useResetFlow, useSetFlow } from '@/hooks/flow-hooks';
 import { RAGFlowNodeType } from '@/interfaces/database/flow';
 import { useDebounceEffect } from 'ahooks';
 import dayjs from 'dayjs';
@@ -12,20 +8,20 @@ import useGraphStore from '../store';
 import { useBuildDslData } from './use-build-dsl';
 
 export const useSaveGraph = () => {
-  const { data } = useFetchAgent();
-  const { setAgent, loading } = useSetAgent();
+  const { data } = useFetchFlow();
+  const { setFlow, loading } = useSetFlow();
   const { id } = useParams();
   const { buildDslData } = useBuildDslData();
 
   const saveGraph = useCallback(
     async (currentNodes?: RAGFlowNodeType[]) => {
-      return setAgent({
+      return setFlow({
         id,
         title: data.title,
         dsl: buildDslData(currentNodes),
       });
     },
-    [setAgent, data, id, buildDslData],
+    [setFlow, id, data.title, buildDslData],
   );
 
   return { saveGraph, loading };
@@ -33,21 +29,21 @@ export const useSaveGraph = () => {
 
 export const useSaveGraphBeforeOpeningDebugDrawer = (show: () => void) => {
   const { saveGraph, loading } = useSaveGraph();
-  const { resetAgent } = useResetAgent();
+  const { resetFlow } = useResetFlow();
 
   const handleRun = useCallback(
     async (nextNodes?: RAGFlowNodeType[]) => {
       const saveRet = await saveGraph(nextNodes);
       if (saveRet?.code === 0) {
         // Call the reset api before opening the run drawer each time
-        const resetRet = await resetAgent();
+        const resetRet = await resetFlow();
         // After resetting, all previous messages will be cleared.
         if (resetRet?.code === 0) {
           show();
         }
       }
     },
-    [saveGraph, resetAgent, show],
+    [saveGraph, resetFlow, show],
   );
 
   return { handleRun, loading };
@@ -58,7 +54,7 @@ export const useWatchAgentChange = (chatDrawerVisible: boolean) => {
   const nodes = useGraphStore((state) => state.nodes);
   const edges = useGraphStore((state) => state.edges);
   const { saveGraph } = useSaveGraph();
-  const { data: flowDetail } = useFetchAgent();
+  const { data: flowDetail } = useFetchFlow();
 
   const setSaveTime = useCallback((updateTime: number) => {
     setTime(dayjs(updateTime).format('YYYY-MM-DD HH:mm:ss'));

@@ -7,7 +7,7 @@ import {
 import useGraphStore from '../../store';
 
 import { useTheme } from '@/components/theme-provider';
-import { useFetchAgent } from '@/hooks/use-agent-request';
+import { useFetchFlow } from '@/hooks/flow-hooks';
 import { useMemo } from 'react';
 import styles from './index.less';
 
@@ -44,7 +44,7 @@ export function ButtonEdge({
   };
 
   // highlight the nodes that the workflow passes through
-  const { data: flowDetail } = useFetchAgent();
+  const { data: flowDetail } = useFetchFlow();
 
   const graphPath = useMemo(() => {
     // TODO: this will be called multiple times
@@ -57,7 +57,7 @@ export function ButtonEdge({
     if (previousGraphPath.length > 0 && previousLatestElement) {
       graphPath = [previousLatestElement, ...graphPath];
     }
-    return Array.isArray(graphPath) ? graphPath : [];
+    return graphPath;
   }, [flowDetail.dsl?.path]);
 
   const highlightStyle = useMemo(() => {

@@ -8,9 +8,7 @@ import { useBuildComponentIdSelectOptions } from '../../hooks/use-get-begin-quer
 import styles from './index.less';
 
 interface IProps {
-  name?: string;
   node?: RAGFlowNodeType;
-  title?: string;
 }
 
 enum VariableType {
@@ -21,8 +19,7 @@ enum VariableType {
 const getVariableName = (type: string) =>
   type === VariableType.Reference ? 'component_id' : 'value';
 
-const DynamicVariableForm = ({ name: formName, node }: IProps) => {
-  const nextFormName = formName || 'query';
+const DynamicVariableForm = ({ node }: IProps) => {
   const { t } = useTranslation();
   const valueOptions = useBuildComponentIdSelectOptions(
     node?.id,
@@ -38,15 +35,15 @@ const DynamicVariableForm = ({ name: formName, node }: IProps) => {
   const handleTypeChange = useCallback(
     (name: number) => () => {
       setTimeout(() => {
-        form.setFieldValue([nextFormName, name, 'component_id'], undefined);
-        form.setFieldValue([nextFormName, name, 'value'], undefined);
+        form.setFieldValue(['query', name, 'component_id'], undefined);
+        form.setFieldValue(['query', name, 'value'], undefined);
       }, 0);
     },
-    [form, nextFormName],
+    [form],
   );
 
   return (
-    <Form.List name={nextFormName}>
+    <Form.List name="query">
       {(fields, { add, remove }) => (
         <>
           {fields.map(({ key, name, ...restField }) => (
@@ -63,7 +60,7 @@ const DynamicVariableForm = ({ name: formName, node }: IProps) => {
               </Form.Item>
               <Form.Item noStyle dependencies={[name, 'type']}>
                 {({ getFieldValue }) => {
-                  const type = getFieldValue([nextFormName, name, 'type']);
+                  const type = getFieldValue(['query', name, 'type']);
                   return (
                     <Form.Item
                       {...restField}
@@ -121,11 +118,11 @@ export function FormCollapse({
   );
 }
 
-const DynamicInputVariable = ({ name, node, title }: IProps) => {
+const DynamicInputVariable = ({ node }: IProps) => {
   const { t } = useTranslation();
   return (
-    <FormCollapse title={title || t('flow.input')}>
-      <DynamicVariableForm name={name} node={node}></DynamicVariableForm>
+    <FormCollapse title={t('flow.input')}>
+      <DynamicVariableForm node={node}></DynamicVariableForm>
     </FormCollapse>
   );
 };

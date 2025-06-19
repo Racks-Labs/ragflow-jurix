@@ -25,7 +25,6 @@ export interface IKnowledge {
   embd_id: string;
   nickname: string;
   operator_permission: number;
-  size: number;
 }
 
 export interface IKnowledgeResult {
@@ -129,7 +128,6 @@ export interface ITestingChunk {
   highlight: string;
   positions: number[][];
   docnm_kwd: string;
-  doc_type_kwd: string;
 }
 
 export interface ITestingDocument {

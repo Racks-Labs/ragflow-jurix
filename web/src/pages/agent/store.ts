@@ -56,7 +56,6 @@ export type RFState = {
     source: string,
     sourceHandle?: string | null,
     target?: string | null,
-    isConnecting?: boolean,
   ) => void;
   deletePreviousEdgeOfClassificationNode: (connection: Connection) => void;
   duplicateNode: (id: string, name: string) => void;
@@ -205,7 +204,7 @@ const useGraphStore = create<RFState>()(
                 ]);
               break;
             case Operator.Switch: {
-              updateSwitchFormData(source, sourceHandle, target, true);
+              updateSwitchFormData(source, sourceHandle, target);
               break;
             }
             default:
@@ -220,7 +219,7 @@ const useGraphStore = create<RFState>()(
         const anchoredNodes = [
           Operator.Categorize,
           Operator.Relevant,
-          // Operator.Switch,
+          Operator.Switch,
         ];
         if (
           anchoredNodes.some(
@@ -304,7 +303,7 @@ const useGraphStore = create<RFState>()(
         const currentEdge = edges.find((x) => x.id === id);
 
         if (currentEdge) {
-          const { source, sourceHandle, target } = currentEdge;
+          const { source, sourceHandle } = currentEdge;
           const operatorType = getOperatorTypeFromId(source);
           // After deleting the edge, set the corresponding field in the node's form field to undefined
           switch (operatorType) {
@@ -322,7 +321,7 @@ const useGraphStore = create<RFState>()(
                 ]);
               break;
             case Operator.Switch: {
-              updateSwitchFormData(source, sourceHandle, target, false);
+              updateSwitchFormData(source, sourceHandle, undefined);
               break;
             }
             default:
@@ -403,32 +402,15 @@ const useGraphStore = create<RFState>()(
 
         return nextNodes;
       },
-      updateSwitchFormData: (source, sourceHandle, target, isConnecting) => {
-        const { updateNodeForm, edges } = get();
+      updateSwitchFormData: (source, sourceHandle, target) => {
+        const { updateNodeForm } = get();
         if (sourceHandle) {
-          // A handle will connect to multiple downstream nodes
-          let currentHandleTargets = edges
-            .filter(
-              (x) =>
-                x.source === source &&
-                x.sourceHandle === sourceHandle &&
-                typeof x.target === 'string',
-            )
-            .map((x) => x.target);
-
-          let targets: string[] = currentHandleTargets;
-          if (target) {
-            if (!isConnecting) {
-              targets = currentHandleTargets.filter((x) => x !== target);
-            }
-          }
-
           if (sourceHandle === SwitchElseTo) {
-            updateNodeForm(source, targets, [SwitchElseTo]);
+            updateNodeForm(source, target, [SwitchElseTo]);
           } else {
             const operatorIndex = getOperatorIndex(sourceHandle);
             if (operatorIndex) {
-              updateNodeForm(source, targets, [
+              updateNodeForm(source, target, [
                 'conditions',
                 Number(operatorIndex) - 1, // The index is the conditions form index
                 'to',
@@ -466,7 +448,7 @@ const useGraphStore = create<RFState>()(
         return generateNodeNamesWithIncreasingIndex(name, nodes);
       },
     })),
-    { name: 'graph', trace: true },
+    { name: 'graph' },
   ),
 );
 

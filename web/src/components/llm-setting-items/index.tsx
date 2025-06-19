@@ -8,7 +8,6 @@ import camelCase from 'lodash/camelCase';
 
 import { useTranslate } from '@/hooks/common-hooks';
 import { useComposeLlmOptionsByModelTypes } from '@/hooks/llm-hooks';
-import { setChatVariableEnabledFieldValuePage } from '@/utils/chat';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useCallback, useMemo } from 'react';
 import styles from './index.less';
@@ -17,10 +16,9 @@ interface IProps {
   prefix?: string;
   formItemLayout?: any;
   handleParametersChange?(value: ModelVariableType): void;
-  onChange?(value: string, option: any): void;
 }
 
-const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
+const LlmSettingItems = ({ prefix, formItemLayout = {} }: IProps) => {
   const form = Form.useFormInstance();
   const { t } = useTranslate('chat');
   const parameterOptions = Object.values(ModelVariableType).map((x) => ({
@@ -35,8 +33,7 @@ const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
       if (prefix) {
         nextVariable = { [prefix]: variable };
       }
-      const variableCheckBoxFieldMap = setChatVariableEnabledFieldValuePage();
-      form.setFieldsValue({ ...nextVariable, ...variableCheckBoxFieldMap });
+      form.setFieldsValue(nextVariable);
     },
     [form, prefix],
   );
@@ -61,7 +58,6 @@ const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
           options={modelOptions}
           showSearch
           popupMatchSelectWidth={false}
-          onChange={onChange}
         />
       </Form.Item>
       <div className="border rounded-md">
@@ -104,11 +100,7 @@ const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
               >
                 <Switch size="small" />
               </Form.Item>
-              <Form.Item
-                noStyle
-                dependencies={['temperatureEnabled']}
-                shouldUpdate
-              >
+              <Form.Item noStyle dependencies={['temperatureEnabled']}>
                 {({ getFieldValue }) => {
                   const disabled = !getFieldValue('temperatureEnabled');
                   return (
@@ -153,7 +145,7 @@ const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
               <Form.Item name={'topPEnabled'} valuePropName="checked" noStyle>
                 <Switch size="small" />
               </Form.Item>
-              <Form.Item noStyle dependencies={['topPEnabled']} shouldUpdate>
+              <Form.Item noStyle dependencies={['topPEnabled']}>
                 {({ getFieldValue }) => {
                   const disabled = !getFieldValue('topPEnabled');
                   return (
@@ -196,11 +188,7 @@ const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
               >
                 <Switch size="small" />
               </Form.Item>
-              <Form.Item
-                noStyle
-                dependencies={['presencePenaltyEnabled']}
-                shouldUpdate
-              >
+              <Form.Item noStyle dependencies={['presencePenaltyEnabled']}>
                 {({ getFieldValue }) => {
                   const disabled = !getFieldValue('presencePenaltyEnabled');
                   return (
@@ -249,11 +237,7 @@ const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
               >
                 <Switch size="small" />
               </Form.Item>
-              <Form.Item
-                noStyle
-                dependencies={['frequencyPenaltyEnabled']}
-                shouldUpdate
-              >
+              <Form.Item noStyle dependencies={['frequencyPenaltyEnabled']}>
                 {({ getFieldValue }) => {
                   const disabled = !getFieldValue('frequencyPenaltyEnabled');
                   return (
@@ -281,58 +265,6 @@ const LlmSettingItems = ({ prefix, formItemLayout = {}, onChange }: IProps) => {
                           min={0}
                           step={0.01}
                           disabled={disabled}
-                        />
-                      </Form.Item>
-                    </>
-                  );
-                }}
-              </Form.Item>
-            </Flex>
-          </Form.Item>
-          <Form.Item
-            label={t('maxTokens')}
-            tooltip={t('maxTokensTip')}
-            {...formItemLayout}
-          >
-            <Flex gap={20} align="center">
-              <Form.Item
-                name={'maxTokensEnabled'}
-                valuePropName="checked"
-                noStyle
-              >
-                <Switch size="small" />
-              </Form.Item>
-              <Form.Item
-                noStyle
-                dependencies={['maxTokensEnabled']}
-                shouldUpdate
-              >
-                {({ getFieldValue }) => {
-                  const disabled = !getFieldValue('maxTokensEnabled');
-
-                  return (
-                    <>
-                      <Flex flex={1}>
-                        <Form.Item
-                          name={[...memorizedPrefix, 'max_tokens']}
-                          noStyle
-                        >
-                          <Slider
-                            className={styles.variableSlider}
-                            max={128000}
-                            disabled={disabled}
-                          />
-                        </Form.Item>
-                      </Flex>
-                      <Form.Item
-                        name={[...memorizedPrefix, 'max_tokens']}
-                        noStyle
-                      >
-                        <InputNumber
-                          disabled={disabled}
-                          className={styles.sliderInputNumber}
-                          max={128000}
-                          min={0}
                         />
                       </Form.Item>
                     </>

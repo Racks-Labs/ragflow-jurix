@@ -26,7 +26,7 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-8 w-full items-center justify-between rounded-md border border-input bg-colors-background-inverse-weak px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
+      'flex h-10 w-full items-center justify-between rounded-md border border-input bg-colors-background-inverse-weak px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1',
       className,
     )}
     {...props}
@@ -134,16 +134,17 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      'relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}
     {...props}
   >
-    <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
         <Check className="h-4 w-4" />
       </SelectPrimitive.ItemIndicator>
     </span>
+
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
   </SelectPrimitive.Item>
 ));
@@ -178,7 +179,6 @@ export type RAGFlowSelectOptionType = {
   label: React.ReactNode;
   value: string;
   disabled?: boolean;
-  icon?: React.ReactNode;
 };
 
 export type RAGFlowSelectGroupOptionType = {
@@ -192,8 +192,6 @@ export type RAGFlowSelectProps = Partial<ControllerRenderProps> & {
   allowClear?: boolean;
   placeholder?: React.ReactNode;
   contentProps?: React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>;
-  triggerClassName?: string;
-  onlyShowSelectedIcon?: boolean;
 } & SelectPrimitive.SelectProps;
 
 /**
@@ -224,14 +222,12 @@ export const RAGFlowSelect = forwardRef<
     allowClear,
     placeholder,
     contentProps = {},
-    // defaultValue,
-    triggerClassName,
-    onlyShowSelectedIcon = false,
+    defaultValue,
   },
   ref,
 ) {
   const [key, setKey] = React.useState(+new Date());
-  const [value, setValue] = React.useState<string | undefined>(initialValue);
+  const [value, setValue] = React.useState<string | undefined>(defaultValue);
 
   const FormControlWidget = FormControlComponent
     ? FormControlComponent
@@ -259,35 +255,17 @@ export const RAGFlowSelect = forwardRef<
     });
   }, [initialValue]);
 
-  // The value selected in the drop-down box only displays the icon
-  const label = React.useMemo(() => {
-    let nextOptions = options;
-    if (options.some((x) => !('value' in x))) {
-      nextOptions = (options as RAGFlowSelectGroupOptionType[]).reduce<
-        RAGFlowSelectOptionType[]
-      >((pre, cur) => {
-        return pre.concat(cur?.options ?? []);
-      }, []);
-    }
-
-    const option = (nextOptions as RAGFlowSelectOptionType[]).find(
-      (x) => x.value === value,
-    );
-
-    return onlyShowSelectedIcon ? option?.icon : option?.label;
-  }, [onlyShowSelectedIcon, options, value]);
-
   return (
     <Select onValueChange={handleChange} value={value} key={key}>
       <FormControlWidget>
         <SelectTrigger
+          className="bg-colors-background-inverse-weak"
           value={value}
           onReset={handleReset}
           allowClear={allowClear}
           ref={ref}
-          className={triggerClassName}
         >
-          <SelectValue placeholder={placeholder}>{label}</SelectValue>
+          <SelectValue placeholder={placeholder} />
         </SelectTrigger>
       </FormControlWidget>
       <SelectContent {...contentProps}>
@@ -299,17 +277,14 @@ export const RAGFlowSelect = forwardRef<
                 key={o.value}
                 disabled={o.disabled}
               >
-                <div className="flex items-center gap-1">
-                  {o.icon}
-                  {o.label}
-                </div>
+                {o.label}
               </SelectItem>
             );
           }
 
           return (
             <SelectGroup key={idx}>
-              <SelectLabel className="pl-2">{o.label}</SelectLabel>
+              <SelectLabel>{o.label}</SelectLabel>
               {o.options.map((x) => (
                 <SelectItem value={x.value} key={x.value} disabled={x.disabled}>
                   {x.label}

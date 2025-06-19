@@ -1,7 +1,6 @@
 import ListFilterBar from '@/components/list-filter-bar';
 import { RenameDialog } from '@/components/rename-dialog';
 import { Button } from '@/components/ui/button';
-import { RAGFlowPagination } from '@/components/ui/ragflow-pagination';
 import { useFetchNextKnowledgeListByPage } from '@/hooks/use-knowledge-request';
 import { pick } from 'lodash';
 import { Plus } from 'lucide-react';
@@ -9,6 +8,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DatasetCard } from './dataset-card';
 import { DatasetCreatingDialog } from './dataset-creating-dialog';
+import { DatasetsPagination } from './datasets-pagination';
 import { useSaveKnowledge } from './hooks';
 import { useRenameDataset } from './use-rename-dataset';
 import { useSelectOwners } from './use-select-owners';
@@ -53,23 +53,21 @@ export default function Datasets() {
   );
 
   return (
-    <section className="py-4 text-foreground">
+    <section className="p-8 text-foreground">
       <ListFilterBar
-        title={t('header.knowledgeBase')}
+        title="Datasets"
         searchString={searchString}
         onSearchChange={handleInputChange}
         value={filterValue}
         filters={owners}
         onChange={handleFilterSubmit}
-        className="px-8"
-        icon={'data'}
       >
-        <Button onClick={showModal}>
-          <Plus className=" size-2.5" />
+        <Button variant={'tertiary'} size={'sm'} onClick={showModal}>
+          <Plus className="mr-2 h-4 w-4" />
           {t('knowledgeList.createKnowledgeBase')}
         </Button>
       </ListFilterBar>
-      <div className="flex flex-wrap gap-4 max-h-[78vh] overflow-auto px-8">
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-8">
         {kbs.map((dataset) => {
           return (
             <DatasetCard
@@ -80,12 +78,12 @@ export default function Datasets() {
           );
         })}
       </div>
-      <div className="mt-8 px-8">
-        <RAGFlowPagination
+      <div className="mt-8">
+        <DatasetsPagination
           {...pick(pagination, 'current', 'pageSize')}
           total={total}
           onChange={handlePageChange}
-        ></RAGFlowPagination>
+        ></DatasetsPagination>
       </div>
       {visible && (
         <DatasetCreatingDialog

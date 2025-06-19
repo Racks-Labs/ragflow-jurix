@@ -43,14 +43,7 @@ const RetrievalForm = ({ onValuesChange, form, node }: IOperatorForm) => {
       <Rerank></Rerank>
       <TavilyItem name={'tavily_api_key'}></TavilyItem>
       <UseKnowledgeGraphItem filedName={'use_kg'}></UseKnowledgeGraphItem>
-      <KnowledgeBaseItem
-        tooltipText={t('knowledgeBasesTip')}
-      ></KnowledgeBaseItem>
-      <DynamicInputVariable
-        name={'kb_vars'}
-        node={node}
-        title={t('knowledgeBaseVars')}
-      ></DynamicInputVariable>
+      <KnowledgeBaseItem></KnowledgeBaseItem>
       <Form.Item
         name={'empty_response'}
         label={t('emptyResponse', { keyPrefix: 'chat' })}

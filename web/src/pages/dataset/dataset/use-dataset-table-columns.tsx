@@ -1,4 +1,4 @@
-import { FileIcon } from '@/components/icon-font';
+import SvgIcon from '@/components/svg-icon';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
@@ -12,6 +12,7 @@ import { useSetDocumentStatus } from '@/hooks/use-document-request';
 import { IDocumentInfo } from '@/interfaces/database/document';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/utils/date';
+import { getExtension } from '@/utils/document-util';
 import { ColumnDef } from '@tanstack/table-core';
 import { ArrowUpDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +34,16 @@ export function useDatasetTableColumns({
   const { t } = useTranslation('translation', {
     keyPrefix: 'knowledgeDetails',
   });
+
+  // const onShowRenameModal = (record: IDocumentInfo) => {
+  //   setCurrentRecord(record);
+  //   showRenameModal();
+  // };
+
+  // const onShowSetMetaModal = useCallback(() => {
+  //   setRecord();
+  //   showSetMetaModal();
+  // }, [setRecord, showSetMetaModal]);
 
   const { navigateToChunkParsedResult } = useNavigatePage();
   const { setDocumentStatus } = useSetDocumentStatus();
@@ -87,7 +98,10 @@ export function useDatasetTableColumns({
                   row.original.kb_id,
                 )}
               >
-                <FileIcon name={name}></FileIcon>
+                <SvgIcon
+                  name={`file-icon/${getExtension(name)}`}
+                  width={24}
+                ></SvgIcon>
                 <span className={cn('truncate')}>{name}</span>
               </div>
             </TooltipTrigger>

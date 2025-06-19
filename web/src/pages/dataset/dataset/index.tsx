@@ -38,7 +38,6 @@ export default function Dataset() {
     setPagination,
     filterValue,
     handleFilterSubmit,
-    loading,
   } = useFetchDocumentList();
   const { filters } = useSelectDatasetFilters();
 
@@ -50,7 +49,7 @@ export default function Dataset() {
     showCreateModal,
   } = useCreateEmptyDocument();
 
-  const { rowSelection, rowSelectionIsEmpty, setRowSelection, selectedCount } =
+  const { rowSelection, rowSelectionIsEmpty, setRowSelection } =
     useRowSelection();
 
   const { list } = useBulkOperateDataset({
@@ -60,7 +59,7 @@ export default function Dataset() {
   });
 
   return (
-    <section className="p-5">
+    <section className="p-8">
       <ListFilterBar
         title="Dataset"
         onSearchChange={handleInputChange}
@@ -68,19 +67,10 @@ export default function Dataset() {
         value={filterValue}
         onChange={handleFilterSubmit}
         filters={filters}
-        leftPanel={
-          <div className="items-start">
-            <div className="pb-1">Dataset</div>
-            <div className="text-text-sub-title-invert text-sm">
-              Please wait for your files to finish parsing before starting an
-              AI-powered chat.
-            </div>
-          </div>
-        }
       >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button size={'sm'}>
+            <Button variant={'tertiary'} size={'sm'}>
               <Upload />
               {t('knowledgeDetails.addFile')}
             </Button>
@@ -96,16 +86,13 @@ export default function Dataset() {
           </DropdownMenuContent>
         </DropdownMenu>
       </ListFilterBar>
-      {rowSelectionIsEmpty || (
-        <BulkOperateBar list={list} count={selectedCount}></BulkOperateBar>
-      )}
+      {rowSelectionIsEmpty || <BulkOperateBar list={list}></BulkOperateBar>}
       <DatasetTable
         documents={documents}
         pagination={pagination}
         setPagination={setPagination}
         rowSelection={rowSelection}
         setRowSelection={setRowSelection}
-        loading={loading}
       ></DatasetTable>
       {documentUploadVisible && (
         <FileUploadDialog

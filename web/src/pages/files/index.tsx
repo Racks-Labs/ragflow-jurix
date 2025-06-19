@@ -20,7 +20,6 @@ import { MoveDialog } from './move-dialog';
 import { useBulkOperateFile } from './use-bulk-operate-file';
 import { useHandleCreateFolder } from './use-create-folder';
 import { useHandleMoveFile } from './use-move-file';
-import { useSelectBreadcrumbItems } from './use-navigate-to-folder';
 import { useHandleUploadFile } from './use-upload-file';
 
 export default function Files() {
@@ -52,20 +51,15 @@ export default function Files() {
   } = useFetchFileList();
 
   const {
-    rowSelection,
-    setRowSelection,
-    rowSelectionIsEmpty,
-    clearRowSelection,
-    selectedCount,
-  } = useRowSelection();
-
-  const {
     showMoveFileModal,
     moveFileVisible,
     onMoveFileOk,
     hideMoveFileModal,
     moveFileLoading,
-  } = useHandleMoveFile({ clearRowSelection });
+  } = useHandleMoveFile();
+
+  const { rowSelection, setRowSelection, rowSelectionIsEmpty } =
+    useRowSelection();
 
   const { list } = useBulkOperateFile({
     files,
@@ -74,11 +68,9 @@ export default function Files() {
     setRowSelection,
   });
 
-  const breadcrumbItems = useSelectBreadcrumbItems();
-
   const leftPanel = (
     <div>
-      {breadcrumbItems.length > 0 ? <FileBreadcrumb></FileBreadcrumb> : 'File'}
+      <FileBreadcrumb></FileBreadcrumb>
     </div>
   );
 
@@ -89,11 +81,10 @@ export default function Files() {
         searchString={searchString}
         onSearchChange={handleInputChange}
         showFilter={false}
-        icon={'file'}
       >
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button>
+            <Button variant={'tertiary'} size={'sm'}>
               <Upload />
               {t('knowledgeDetails.addFile')}
             </Button>
@@ -109,9 +100,7 @@ export default function Files() {
           </DropdownMenuContent>
         </DropdownMenu>
       </ListFilterBar>
-      {!rowSelectionIsEmpty && (
-        <BulkOperateBar list={list} count={selectedCount}></BulkOperateBar>
-      )}
+      {!rowSelectionIsEmpty && <BulkOperateBar list={list}></BulkOperateBar>}
       <FilesTable
         files={files}
         total={total}
@@ -137,6 +126,7 @@ export default function Files() {
           onOk={onFolderCreateOk}
         ></CreateFolderDialog>
       )}
+
       {moveFileVisible && (
         <MoveDialog
           hideModal={hideMoveFileModal}

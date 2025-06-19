@@ -1,4 +1,3 @@
-import { ButtonLoading } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
@@ -6,6 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { LoadingButton } from '@/components/ui/loading-button';
 import { IModalProps } from '@/interfaces/common';
 import { TagRenameId } from '@/pages/add-knowledge/constant';
 import { useTranslation } from 'react-i18next';
@@ -26,9 +26,9 @@ export function CreateAgentDialog({
         </DialogHeader>
         <CreateAgentForm hideModal={hideModal} onOk={onOk}></CreateAgentForm>
         <DialogFooter>
-          <ButtonLoading type="submit" form={TagRenameId} loading={loading}>
+          <LoadingButton type="submit" form={TagRenameId} loading={loading}>
             {t('common.save')}
-          </ButtonLoading>
+          </LoadingButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,11 +1,8 @@
 import { useSetModalState } from '@/hooks/common-hooks';
-import { UseRowSelectionType } from '@/hooks/logic-hooks/use-row-selection';
 import { useMoveFile } from '@/hooks/use-file-request';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-export const useHandleMoveFile = ({
-  clearRowSelection,
-}: Pick<UseRowSelectionType, 'clearRowSelection'>) => {
+export const useHandleMoveFile = () => {
   const {
     visible: moveFileVisible,
     hideModal: hideMoveFileModal,
@@ -13,7 +10,6 @@ export const useHandleMoveFile = ({
   } = useSetModalState();
   const { moveFile, loading } = useMoveFile();
   const [sourceFileIds, setSourceFileIds] = useState<string[]>([]);
-  const isBulkRef = useRef(false);
 
   const onMoveFileOk = useCallback(
     async (targetFolderId: string) => {
@@ -23,19 +19,16 @@ export const useHandleMoveFile = ({
       });
 
       if (ret === 0) {
-        if (isBulkRef.current) {
-          clearRowSelection();
-        }
+        // setSelectedRowKeys([]);
         hideMoveFileModal();
       }
       return ret;
     },
-    [moveFile, sourceFileIds, hideMoveFileModal, clearRowSelection],
+    [moveFile, hideMoveFileModal, sourceFileIds],
   );
 
   const handleShowMoveFileModal = useCallback(
-    (ids: string[], isBulk = false) => {
-      isBulkRef.current = isBulk;
+    (ids: string[]) => {
       setSourceFileIds(ids);
       showMoveFileModal();
     },
