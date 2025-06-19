@@ -1,10 +1,10 @@
-import { cn } from '../../../lib/utils';
+import { cn } from '../../../../lib/utils';
 import { memo } from 'react';
 import { Operator } from '../../constant';
 import OperatorIcon from '../../operator-icon';
-import { useTranslate } from '../../../hooks/use-translate';
-import { RunTooltip } from '../../../components/run-tooltip';
-import { NextNodePopover } from '../../../components/next-node-popover';
+import { useTranslate } from '../../../../hooks/use-translate';
+import { RunTooltip } from '../../../../components/run-tooltip';
+import { NextNodePopover } from '../../../../components/next-node-popover';
 import { Play } from 'lucide-react';
 import { needsSingleStepDebugging } from '../../utils';
 
